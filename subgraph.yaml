@@ -34,6 +34,8 @@ dataSources:
           handler: handleExtendCampaign
         - event: StartCampaign(indexed address,indexed uint256,uint256)
           handler: handleStartCampaign
+        - event: Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleTransfer
         - event: Withdraw(indexed uint256,uint256)
           handler: handleWithdraw
       file: ./src/fundraiser.ts
