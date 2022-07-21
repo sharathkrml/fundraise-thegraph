@@ -1,78 +1,75 @@
-import { BigInt } from "@graphprotocol/graph-ts"
+import { Address, BigInt } from "@graphprotocol/graph-ts";
 import {
   Fundraiser,
   Approval,
   ApprovalForAll,
-  Donation,
-  EndCampaign,
-  ExtendCampaign,
-  StartCampaign,
+  Donation as DonationEvent,
+  EndCampaign as EndCampaignEvent,
+  ExtendCampaign as ExtendCampaignEvent,
+  StartCampaign as StartCampaignEvent,
   Transfer,
-  Withdraw
-} from "../generated/Fundraiser/Fundraiser"
-import { ExampleEntity } from "../generated/schema"
+  Withdraw as WithdrawEvent,
+} from "../generated/undefined/Fundraiser";
+import { Campaign, Donation } from "../generated/schema";
 
-export function handleApproval(event: Approval): void {
-  // Entities can be loaded from the store using a string ID; this ID
-  // needs to be unique across all entities of the same type
-  let entity = ExampleEntity.load(event.transaction.from.toHex())
-
-  // Entities only exist after they have been saved to the store;
-  // `null` checks allow to create entities on demand
-  if (!entity) {
-    entity = new ExampleEntity(event.transaction.from.toHex())
-
-    // Entity fields can be set using simple assignments
-    entity.count = BigInt.fromI32(0)
+export function handleStartCampaign(event: StartCampaignEvent): void {
+  let campaign = Campaign.load(event.params.tokenId.toHexString());
+  if (!campaign) {
+    campaign = new Campaign(event.params.tokenId.toHexString());
   }
-
-  // BigInt and BigDecimal math are supported
-  entity.count = entity.count + BigInt.fromI32(1)
-
-  // Entity fields can be set based on event parameters
-  entity.owner = event.params.owner
-  entity.approved = event.params.approved
-
-  // Entities can be written to the store with `.save()`
-  entity.save()
-
-  // Note: If a handler doesn't require existing field values, it is faster
-  // _not_ to load the entity from the store. Instead, create it fresh with
-  // `new Entity(...)`, set the fields that should be updated and save the
-  // entity back to the store. Fields that were not set or unset remain
-  // unchanged, allowing for partial updates to be applied.
-
-  // It is also possible to access smart contracts from mappings. For
-  // example, the contract that has emitted the event can be connected to
-  // with:
-  //
-  // let contract = Contract.bind(event.address)
-  //
-  // The following functions can then be called on this contract to access
-  // state variables and other data:
-  //
-  // - contract.balanceOf(...)
-  // - contract.getApproved(...)
-  // - contract.getCampaign(...)
-  // - contract.getLastTokenId(...)
-  // - contract.isApprovedForAll(...)
-  // - contract.name(...)
-  // - contract.ownerOf(...)
-  // - contract.supportsInterface(...)
-  // - contract.symbol(...)
-  // - contract.tokenURI(...)
+  campaign.tokenId = event.params.tokenId;
+  campaign.owner = event.params.owner;
+  campaign.currAmt = new BigInt(0);
+  campaign.requiredAmt = event.params.requiredAmt;
+  campaign.completed = false;
+  campaign.save();
 }
 
-export function handleApprovalForAll(event: ApprovalForAll): void {}
+export function handleDonation(event: DonationEvent): void {
+  let donation = Donation.load(
+    event.params.tokenId.toHexString() + event.params.from.toHexString()
+  );
+  if (!donation) {
+    donation = new Donation(
+      event.params.tokenId.toHexString() + event.params.from.toHexString()
+    );
+  }
+  donation.tokenId = event.params.tokenId;
+  donation.amount = event.params.amount;
+  donation.from = event.params.from;
+  donation.save();
+  let campaign = Campaign.load(event.params.tokenId.toHexString());
+  if (!campaign) {
+    campaign = new Campaign(event.params.tokenId.toHexString());
+  }
+  campaign.currAmt = campaign.currAmt.plus(event.params.amount);
+  campaign.save();
+}
 
-export function handleDonation(event: Donation): void {}
+export function handleEndCampaign(event: EndCampaignEvent): void {
+  let campaign = Campaign.load(event.params.tokenId.toHexString());
+  if (!campaign) {
+    campaign = new Campaign(event.params.tokenId.toHexString());
+  }
+  campaign.completed = true;
+  campaign.save();
+}
 
-export function handleEndCampaign(event: EndCampaign): void {}
+export function handleExtendCampaign(event: ExtendCampaignEvent): void {
+  let campaign = Campaign.load(event.params.tokenId.toHexString());
+  if (!campaign) {
+    campaign = new Campaign(event.params.tokenId.toHexString());
+  }
+  campaign.requiredAmt = campaign.requiredAmt.plus(event.params.extendAmt);
+  campaign.save();
+}
 
-export function handleExtendCampaign(event: ExtendCampaign): void {}
-
-export function handleStartCampaign(event: StartCampaign): void {}
-
-export function handleTransfer(event: Transfer): void {}
-
-export function handleWithdraw(event: Withdraw): void {}
+export function handleWithdraw(event: WithdrawEvent): void {
+  let campaign = Campaign.load(event.params.tokenId.toHexString());
+  if (!campaign) {
+    campaign = new Campaign(event.params.tokenId.toHexString());
+  }
+  campaign.currAmt = campaign.currAmt.minus(event.params.withdrawedAmt);
+  campaign.requiredAmt = campaign.requiredAmt.minus(event.params.withdrawedAmt);
+  campaign.save();
+}

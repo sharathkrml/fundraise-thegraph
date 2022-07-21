@@ -1,6 +1,14 @@
-type ExampleEntity @entity {
+type Campaign @entity {
   id: ID!
-  count: BigInt!
+  tokenId: BigInt!
   owner: Bytes! # address
-  approved: Bytes! # address
+  currAmt: BigInt!
+  requiredAmt: BigInt!
+  completed: Boolean
+}
+type Donation @entity {
+  id: ID!
+  tokenId: BigInt!
+  amount: BigInt!
+  from: Bytes!
 }

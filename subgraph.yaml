@@ -1,4 +1,4 @@
-specVersion: 0.0.1
+specVersion: 0.0.5
 schema:
   file: ./schema.graphql
 dataSources:
@@ -8,6 +8,7 @@ dataSources:
     source:
       address: "0x3b4646d094099c89377C729e60f9E143dBCd61A0"
       abi: Fundraiser
+      startBlock: 11061639
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -25,10 +26,6 @@ dataSources:
         - name: Fundraiser
           file: ./abis/Fundraiser.json
       eventHandlers:
-        - event: Approval(indexed address,indexed address,indexed uint256)
-          handler: handleApproval
-        - event: ApprovalForAll(indexed address,indexed address,bool)
-          handler: handleApprovalForAll
         - event: Donation(indexed address,indexed uint256,uint256)
           handler: handleDonation
         - event: EndCampaign(indexed uint256)
@@ -37,8 +34,6 @@ dataSources:
           handler: handleExtendCampaign
         - event: StartCampaign(indexed address,indexed uint256,uint256)
           handler: handleStartCampaign
-        - event: Transfer(indexed address,indexed address,indexed uint256)
-          handler: handleTransfer
         - event: Withdraw(indexed uint256,uint256)
           handler: handleWithdraw
       file: ./src/fundraiser.ts
