@@ -201,8 +201,12 @@ export class Withdraw__Params {
     return this._event.parameters[0].value.toBigInt();
   }
 
+  get from(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+
   get withdrawedAmt(): BigInt {
-    return this._event.parameters[1].value.toBigInt();
+    return this._event.parameters[2].value.toBigInt();
   }
 }
 

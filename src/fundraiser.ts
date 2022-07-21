@@ -10,7 +10,7 @@ import {
   Transfer as TransferEvent,
   Withdraw as WithdrawEvent,
 } from "../generated/undefined/Fundraiser";
-import { Campaign, Donation } from "../generated/schema";
+import { Campaign, Donation, Withdraw } from "../generated/schema";
 
 export function handleStartCampaign(event: StartCampaignEvent): void {
   let campaign = Campaign.load(event.params.tokenId.toHex());
@@ -46,6 +46,15 @@ export function handleEndCampaign(event: EndCampaignEvent): void {
   }
   campaign.completed = true;
   campaign.save();
+  let withdraw = Withdraw.load(event.transaction.hash.toHex());
+  if (!withdraw) {
+    withdraw = new Withdraw(event.transaction.hash.toHex());
+  }
+  let fundraiser = Fundraiser.bind(event.address);
+  withdraw.tokenId = event.params.tokenId;
+  withdraw.from = fundraiser.ownerOf(event.params.tokenId);
+  withdraw.withdrawedAmt = fundraiser.getCampaign(event.params.tokenId).currAmt;
+  withdraw.save();
 }
 
 export function handleExtendCampaign(event: ExtendCampaignEvent): void {
@@ -65,6 +74,14 @@ export function handleWithdraw(event: WithdrawEvent): void {
   campaign.currAmt = campaign.currAmt.minus(event.params.withdrawedAmt);
   campaign.requiredAmt = campaign.requiredAmt.minus(event.params.withdrawedAmt);
   campaign.save();
+  let withdraw = Withdraw.load(event.transaction.hash.toHex());
+  if (!withdraw) {
+    withdraw = new Withdraw(event.transaction.hash.toHex());
+  }
+  withdraw.tokenId = event.params.tokenId;
+  withdraw.from = event.params.from;
+  withdraw.withdrawedAmt = event.params.withdrawedAmt;
+  withdraw.save();
 }
 
 export function handleTransfer(event: TransferEvent): void {

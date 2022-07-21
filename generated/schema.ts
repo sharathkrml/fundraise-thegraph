@@ -146,3 +146,62 @@ export class Donation extends Entity {
     this.set("from", Value.fromBytes(value));
   }
 }
+
+export class Withdraw extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Withdraw entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type Withdraw must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Withdraw", id.toString(), this);
+    }
+  }
+
+  static load(id: string): Withdraw | null {
+    return changetype<Withdraw | null>(store.get("Withdraw", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get tokenId(): BigInt {
+    let value = this.get("tokenId");
+    return value!.toBigInt();
+  }
+
+  set tokenId(value: BigInt) {
+    this.set("tokenId", Value.fromBigInt(value));
+  }
+
+  get withdrawedAmt(): BigInt {
+    let value = this.get("withdrawedAmt");
+    return value!.toBigInt();
+  }
+
+  set withdrawedAmt(value: BigInt) {
+    this.set("withdrawedAmt", Value.fromBigInt(value));
+  }
+
+  get from(): Bytes {
+    let value = this.get("from");
+    return value!.toBytes();
+  }
+
+  set from(value: Bytes) {
+    this.set("from", Value.fromBytes(value));
+  }
+}

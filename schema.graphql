@@ -12,3 +12,10 @@ type Donation @entity {
   amount: BigInt!
   from: Bytes!
 }
+
+type Withdraw @entity {
+  id: ID!
+  tokenId: BigInt!
+  withdrawedAmt: BigInt!
+  from: Bytes!
+}
