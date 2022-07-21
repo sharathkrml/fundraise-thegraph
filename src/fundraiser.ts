@@ -26,14 +26,7 @@ export function handleStartCampaign(event: StartCampaignEvent): void {
 }
 
 export function handleDonation(event: DonationEvent): void {
-  let donation = Donation.load(
-    event.params.tokenId.toHexString() + event.params.from.toHexString()
-  );
-  if (!donation) {
-    donation = new Donation(
-      event.params.tokenId.toHexString() + event.params.from.toHexString()
-    );
-  }
+  let donation = new Donation(event.transaction.hash.toHexString());
   donation.tokenId = event.params.tokenId;
   donation.amount = event.params.amount;
   donation.from = event.params.from;
