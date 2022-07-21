@@ -1,0 +1,44 @@
+specVersion: 0.0.1
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: undefined
+    network: rinkeby
+    source:
+      address: "0x3b4646d094099c89377C729e60f9E143dBCd61A0"
+      abi: Fundraiser
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Approval
+        - ApprovalForAll
+        - Donation
+        - EndCampaign
+        - ExtendCampaign
+        - StartCampaign
+        - Transfer
+        - Withdraw
+      abis:
+        - name: Fundraiser
+          file: ./abis/Fundraiser.json
+      eventHandlers:
+        - event: Approval(indexed address,indexed address,indexed uint256)
+          handler: handleApproval
+        - event: ApprovalForAll(indexed address,indexed address,bool)
+          handler: handleApprovalForAll
+        - event: Donation(indexed address,indexed uint256,uint256)
+          handler: handleDonation
+        - event: EndCampaign(indexed uint256)
+          handler: handleEndCampaign
+        - event: ExtendCampaign(indexed address,indexed uint256,uint256)
+          handler: handleExtendCampaign
+        - event: StartCampaign(indexed address,indexed uint256,uint256)
+          handler: handleStartCampaign
+        - event: Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleTransfer
+        - event: Withdraw(indexed uint256,uint256)
+          handler: handleWithdraw
+      file: ./src/fundraiser.ts
