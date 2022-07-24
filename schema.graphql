@@ -6,6 +6,7 @@ type Campaign @entity {
   requiredAmt: BigInt!
   startedTimeStamp: BigInt
   completedTimeStamp: BigInt
+  Extends: [Extend!]! @derivedFrom(field: "campaign")
 }
 type Extend @entity(immutable: true) {
   id: ID!

@@ -111,6 +111,15 @@ export class Campaign extends Entity {
       this.set("completedTimeStamp", Value.fromBigInt(<BigInt>value));
     }
   }
+
+  get Extends(): Array<string> {
+    let value = this.get("Extends");
+    return value!.toStringArray();
+  }
+
+  set Extends(value: Array<string>) {
+    this.set("Extends", Value.fromStringArray(value));
+  }
 }
 
 export class Extend extends Entity {
@@ -161,21 +170,13 @@ export class Extend extends Entity {
     }
   }
 
-  get timestamp(): BigInt | null {
+  get timestamp(): BigInt {
     let value = this.get("timestamp");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toBigInt();
-    }
+    return value!.toBigInt();
   }
 
-  set timestamp(value: BigInt | null) {
-    if (!value) {
-      this.unset("timestamp");
-    } else {
-      this.set("timestamp", Value.fromBigInt(<BigInt>value));
-    }
+  set timestamp(value: BigInt) {
+    this.set("timestamp", Value.fromBigInt(value));
   }
 
   get campaign(): string {
