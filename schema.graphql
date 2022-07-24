@@ -1,13 +1,14 @@
 type Campaign @entity {
   id: ID!
   tokenId: BigInt!
-  owner: Bytes! # address
+  owner: User!
   currAmt: BigInt!
   requiredAmt: BigInt!
   startedTimeStamp: BigInt
   completedTimeStamp: BigInt
   Extends: [Extend!]! @derivedFrom(field: "campaign")
 }
+
 type Extend @entity(immutable: true) {
   id: ID!
   extendAmt: BigInt
@@ -18,7 +19,7 @@ type Donation @entity(immutable: true) {
   id: ID!
   tokenId: BigInt!
   amount: BigInt!
-  from: Bytes!
+  from: User!
   timestamp: BigInt!
 }
 
@@ -26,6 +27,12 @@ type Withdraw @entity(immutable: true) {
   id: ID!
   tokenId: BigInt!
   withdrawedAmt: BigInt!
-  from: Bytes!
+  from: User!
   timestamp: BigInt!
+}
+type User @entity {
+  id: Bytes!
+  Campaigns: [Campaign!]! @derivedFrom(field: "owner")
+  Donations: [Donation!] @derivedFrom(field: "from")
+  Withdraw: [Withdraw!] @derivedFrom(field: "from")
 }

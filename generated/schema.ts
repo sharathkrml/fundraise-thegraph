@@ -324,3 +324,78 @@ export class Withdraw extends Entity {
     this.set("timestamp", Value.fromBigInt(value));
   }
 }
+
+export class User extends Entity {
+  constructor(id: Bytes) {
+    super();
+    this.set("id", Value.fromBytes(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save User entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.BYTES,
+        `Entities of type User must have an ID of type Bytes but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("User", id.toBytes().toHexString(), this);
+    }
+  }
+
+  static load(id: Bytes): User | null {
+    return changetype<User | null>(store.get("User", id.toHexString()));
+  }
+
+  get id(): Bytes {
+    let value = this.get("id");
+    return value!.toBytes();
+  }
+
+  set id(value: Bytes) {
+    this.set("id", Value.fromBytes(value));
+  }
+
+  get Campaigns(): Array<string> {
+    let value = this.get("Campaigns");
+    return value!.toStringArray();
+  }
+
+  set Campaigns(value: Array<string>) {
+    this.set("Campaigns", Value.fromStringArray(value));
+  }
+
+  get Donations(): Array<string> | null {
+    let value = this.get("Donations");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set Donations(value: Array<string> | null) {
+    if (!value) {
+      this.unset("Donations");
+    } else {
+      this.set("Donations", Value.fromStringArray(<Array<string>>value));
+    }
+  }
+
+  get Withdraw(): Array<string> | null {
+    let value = this.get("Withdraw");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set Withdraw(value: Array<string> | null) {
+    if (!value) {
+      this.unset("Withdraw");
+    } else {
+      this.set("Withdraw", Value.fromStringArray(<Array<string>>value));
+    }
+  }
+}

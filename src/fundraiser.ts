@@ -10,16 +10,27 @@ import {
   Transfer as TransferEvent,
   Withdraw as WithdrawEvent,
 } from "../generated/undefined/Fundraiser";
-import { Campaign, Donation, Extend, Withdraw } from "../generated/schema";
+import {
+  Campaign,
+  Donation,
+  Extend,
+  User,
+  Withdraw,
+} from "../generated/schema";
 
 export function handleStartCampaign(event: StartCampaignEvent): void {
   let campaign = Campaign.load(event.params.tokenId.toHexString());
+  let user = User.load(event.params.owner);
+  if (!user) {
+    user = new User(event.params.owner);
+    user.save();
+  }
   if (!campaign) {
     campaign = new Campaign(event.params.tokenId.toHexString());
   }
   campaign.tokenId = event.params.tokenId;
-  campaign.owner = event.params.owner;
   campaign.currAmt = new BigInt(0);
+  campaign.owner = event.params.owner;
   campaign.requiredAmt = event.params.requiredAmt;
   campaign.startedTimeStamp = event.block.timestamp;
   campaign.save();
@@ -27,6 +38,11 @@ export function handleStartCampaign(event: StartCampaignEvent): void {
 
 export function handleDonation(event: DonationEvent): void {
   let donation = new Donation(event.transaction.hash.toHexString());
+  let user = User.load(event.params.from);
+  if (!user) {
+    user = new User(event.params.from);
+    user.save();
+  }
   donation.tokenId = event.params.tokenId;
   donation.amount = event.params.amount;
   donation.from = event.params.from;
@@ -52,8 +68,14 @@ export function handleEndCampaign(event: EndCampaignEvent): void {
     withdraw = new Withdraw(event.transaction.hash.toHexString());
   }
   let fundraiser = Fundraiser.bind(event.address);
+  let owner = fundraiser.ownerOf(event.params.tokenId);
   withdraw.tokenId = event.params.tokenId;
-  withdraw.from = fundraiser.ownerOf(event.params.tokenId);
+  withdraw.from = owner;
+  let user = User.load(owner);
+  if (!user) {
+    user = new User(owner);
+    user.save();
+  }
   withdraw.withdrawedAmt = fundraiser.getCampaign(event.params.tokenId).currAmt;
   withdraw.timestamp = event.block.timestamp;
   withdraw.save();
@@ -78,6 +100,11 @@ export function handleWithdraw(event: WithdrawEvent): void {
   if (!campaign) {
     campaign = new Campaign(event.params.tokenId.toHexString());
   }
+  let user = User.load(event.params.from);
+  if (!user) {
+    user = new User(event.params.from);
+    user.save();
+  }
   campaign.currAmt = campaign.currAmt.minus(event.params.withdrawedAmt);
   campaign.requiredAmt = campaign.requiredAmt.minus(event.params.withdrawedAmt);
   campaign.save();
@@ -100,6 +127,11 @@ export function handleTransfer(event: TransferEvent): void {
       campaign = new Campaign(event.params.tokenId.toHexString());
     }
     campaign.owner = event.params.to;
+    let user = User.load(event.params.to);
+    if (!user) {
+      user = new User(event.params.to);
+      user.save();
+    }
     campaign.save();
   }
 }
