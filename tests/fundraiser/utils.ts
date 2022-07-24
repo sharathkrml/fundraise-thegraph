@@ -8,6 +8,7 @@ export function createStartCampaignEvent(
   tokenId: i32,
   requiredAmt: i32
 ): StartCampaign {
+  // function gives out event object from given Inputs
   let newStartCampaignEvent = changetype<StartCampaign>(newMockEvent());
   newStartCampaignEvent.parameters = new Array();
   let ownerParam = new ethereum.EventParam(
@@ -29,6 +30,7 @@ export function createStartCampaignEvent(
 }
 
 export function handleStartCampaignEvents(events: StartCampaign[]): void {
+  // emits events & handles it
   events.forEach((event) => {
     handleStartCampaign(event);
   });

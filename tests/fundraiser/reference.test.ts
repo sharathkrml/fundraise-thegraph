@@ -1,6 +1,12 @@
 import { Address, ethereum } from "@graphprotocol/graph-ts";
 import { BigInt } from "@graphprotocol/graph-ts/common/numbers";
-import { assert, test, clearStore, log } from "matchstick-as/assembly/index";
+import {
+  assert,
+  test,
+  clearStore,
+  log,
+  createMockedFunction,
+} from "matchstick-as/assembly/index";
 import { Campaign } from "../../generated/schema";
 import { createStartCampaignEvent, handleStartCampaignEvents } from "./utils";
 
@@ -65,18 +71,18 @@ import { createStartCampaignEvent, handleStartCampaignEvents } from "./utils";
 //   clearStore();
 // });
 
-test("Metadata", () => {
-  let newStartCampaignEvent = createStartCampaignEvent(
-    "0x89205A3A3b2A69De6Dbf7f01ED13B2108B2c43e7",
-    0x1242,
-    0x10
-  );
-  // newStartCampaignEvent.block.timestamp
-  newStartCampaignEvent.address = Address.fromString(
-    "0x89205A3A3b2A69De6Dbf7f01ED13B2108B2c43e7"
-  );
-  assert.addressEquals(
-    newStartCampaignEvent.address,
-    Address.fromString("0x89205A3A3b2A69De6Dbf7f01ED13B2108B2c43e7")
-  );
-});
+// test("Metadata", () => {
+//   let newStartCampaignEvent = createStartCampaignEvent(
+//     "0x89205A3A3b2A69De6Dbf7f01ED13B2108B2c43e7",
+//     0x1242,
+//     0x10
+//   );
+//   // newStartCampaignEvent.block.timestamp
+//   newStartCampaignEvent.address = Address.fromString(
+//     "0x89205A3A3b2A69De6Dbf7f01ED13B2108B2c43e7"
+//   );
+//   assert.addressEquals(
+//     newStartCampaignEvent.address,
+//     Address.fromString("0x89205A3A3b2A69De6Dbf7f01ED13B2108B2c43e7")
+//   );
+// });

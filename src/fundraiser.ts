@@ -26,30 +26,30 @@ export function handleStartCampaign(event: StartCampaignEvent): void {
 }
 
 export function handleDonation(event: DonationEvent): void {
-  let donation = new Donation(event.transaction.hash.toHex());
+  let donation = new Donation(event.transaction.hash.toHexString());
   donation.tokenId = event.params.tokenId;
   donation.amount = event.params.amount;
   donation.from = event.params.from;
   donation.timestamp = event.block.timestamp;
   donation.save();
-  let campaign = Campaign.load(event.params.tokenId.toHex());
+  let campaign = Campaign.load(event.params.tokenId.toHexString());
   if (!campaign) {
-    campaign = new Campaign(event.params.tokenId.toHex());
+    campaign = new Campaign(event.params.tokenId.toHexString());
   }
   campaign.currAmt = campaign.currAmt.plus(event.params.amount);
   campaign.save();
 }
 
 export function handleEndCampaign(event: EndCampaignEvent): void {
-  let campaign = Campaign.load(event.params.tokenId.toHex());
+  let campaign = Campaign.load(event.params.tokenId.toHexString());
   if (!campaign) {
-    campaign = new Campaign(event.params.tokenId.toHex());
+    campaign = new Campaign(event.params.tokenId.toHexString());
   }
   campaign.completedTimeStamp = event.block.timestamp;
   campaign.save();
-  let withdraw = Withdraw.load(event.transaction.hash.toHex());
+  let withdraw = Withdraw.load(event.transaction.hash.toHexString());
   if (!withdraw) {
-    withdraw = new Withdraw(event.transaction.hash.toHex());
+    withdraw = new Withdraw(event.transaction.hash.toHexString());
   }
   let fundraiser = Fundraiser.bind(event.address);
   withdraw.tokenId = event.params.tokenId;
@@ -60,10 +60,10 @@ export function handleEndCampaign(event: EndCampaignEvent): void {
 }
 
 export function handleExtendCampaign(event: ExtendCampaignEvent): void {
-  let extend = new Extend(event.transaction.hash.toHex());
-  let campaign = Campaign.load(event.params.tokenId.toHex());
+  let extend = new Extend(event.transaction.hash.toHexString());
+  let campaign = Campaign.load(event.params.tokenId.toHexString());
   if (!campaign) {
-    campaign = new Campaign(event.params.tokenId.toHex());
+    campaign = new Campaign(event.params.tokenId.toHexString());
   }
   extend.extendAmt = event.params.extendAmt;
   extend.timestamp = event.block.timestamp;
@@ -74,14 +74,14 @@ export function handleExtendCampaign(event: ExtendCampaignEvent): void {
 }
 
 export function handleWithdraw(event: WithdrawEvent): void {
-  let campaign = Campaign.load(event.params.tokenId.toHex());
+  let campaign = Campaign.load(event.params.tokenId.toHexString());
   if (!campaign) {
-    campaign = new Campaign(event.params.tokenId.toHex());
+    campaign = new Campaign(event.params.tokenId.toHexString());
   }
   campaign.currAmt = campaign.currAmt.minus(event.params.withdrawedAmt);
   campaign.requiredAmt = campaign.requiredAmt.minus(event.params.withdrawedAmt);
   campaign.save();
-  let withdraw = new Withdraw(event.transaction.hash.toHex());
+  let withdraw = new Withdraw(event.transaction.hash.toHexString());
   withdraw.tokenId = event.params.tokenId;
   withdraw.from = event.params.from;
   withdraw.withdrawedAmt = event.params.withdrawedAmt;
@@ -95,9 +95,9 @@ export function handleTransfer(event: TransferEvent): void {
     event.params.from !=
     Address.fromString("0x0000000000000000000000000000000000000000")
   ) {
-    let campaign = Campaign.load(event.params.tokenId.toHex());
+    let campaign = Campaign.load(event.params.tokenId.toHexString());
     if (!campaign) {
-      campaign = new Campaign(event.params.tokenId.toHex());
+      campaign = new Campaign(event.params.tokenId.toHexString());
     }
     campaign.owner = event.params.to;
     campaign.save();
