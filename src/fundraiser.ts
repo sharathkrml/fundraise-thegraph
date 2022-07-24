@@ -55,6 +55,7 @@ export function handleEndCampaign(event: EndCampaignEvent): void {
   withdraw.tokenId = event.params.tokenId;
   withdraw.from = fundraiser.ownerOf(event.params.tokenId);
   withdraw.withdrawedAmt = fundraiser.getCampaign(event.params.tokenId).currAmt;
+  withdraw.timestamp = event.block.timestamp;
   withdraw.save();
 }
 

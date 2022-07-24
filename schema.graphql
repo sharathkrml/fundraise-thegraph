@@ -10,7 +10,7 @@ type Campaign @entity {
 type Extend @entity(immutable: true) {
   id: ID!
   extendAmt: BigInt
-  timestamp: BigInt
+  timestamp: BigInt!
   campaign: Campaign!
 }
 type Donation @entity(immutable: true) {
