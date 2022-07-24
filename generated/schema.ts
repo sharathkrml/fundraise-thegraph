@@ -120,6 +120,24 @@ export class Campaign extends Entity {
   set Extends(value: Array<string>) {
     this.set("Extends", Value.fromStringArray(value));
   }
+
+  get Donations(): Array<string> {
+    let value = this.get("Donations");
+    return value!.toStringArray();
+  }
+
+  set Donations(value: Array<string>) {
+    this.set("Donations", Value.fromStringArray(value));
+  }
+
+  get Withdraws(): Array<string> {
+    let value = this.get("Withdraws");
+    return value!.toStringArray();
+  }
+
+  set Withdraws(value: Array<string>) {
+    this.set("Withdraws", Value.fromStringArray(value));
+  }
 }
 
 export class Extend extends Entity {
@@ -220,15 +238,6 @@ export class Donation extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get tokenId(): BigInt {
-    let value = this.get("tokenId");
-    return value!.toBigInt();
-  }
-
-  set tokenId(value: BigInt) {
-    this.set("tokenId", Value.fromBigInt(value));
-  }
-
   get amount(): BigInt {
     let value = this.get("amount");
     return value!.toBigInt();
@@ -254,6 +263,15 @@ export class Donation extends Entity {
 
   set timestamp(value: BigInt) {
     this.set("timestamp", Value.fromBigInt(value));
+  }
+
+  get campaign(): string {
+    let value = this.get("campaign");
+    return value!.toString();
+  }
+
+  set campaign(value: string) {
+    this.set("campaign", Value.fromString(value));
   }
 }
 
@@ -288,13 +306,13 @@ export class Withdraw extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get tokenId(): BigInt {
-    let value = this.get("tokenId");
-    return value!.toBigInt();
+  get campaign(): string {
+    let value = this.get("campaign");
+    return value!.toString();
   }
 
-  set tokenId(value: BigInt) {
-    this.set("tokenId", Value.fromBigInt(value));
+  set campaign(value: string) {
+    this.set("campaign", Value.fromString(value));
   }
 
   get withdrawedAmt(): BigInt {

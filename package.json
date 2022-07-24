@@ -5,7 +5,7 @@
     "codegen": "graph codegen",
     "build": "graph build",
     "test": "graph test",
-    "deploy": "graph deploy --node https://api.studio.thegraph.com/deploy/ fundraiser",
+    "deploy": "graph deploy --studio fundraiser",
     "create-local": "graph create --node http://localhost:8020/ fundraiser",
     "remove-local": "graph remove --node http://localhost:8020/ fundraiser",
     "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 fundraiser"

@@ -43,7 +43,7 @@ export function handleDonation(event: DonationEvent): void {
     user = new User(event.params.from);
     user.save();
   }
-  donation.tokenId = event.params.tokenId;
+  donation.campaign = event.params.tokenId.toHexString();
   donation.amount = event.params.amount;
   donation.from = event.params.from;
   donation.timestamp = event.block.timestamp;
@@ -69,7 +69,7 @@ export function handleEndCampaign(event: EndCampaignEvent): void {
   }
   let fundraiser = Fundraiser.bind(event.address);
   let owner = fundraiser.ownerOf(event.params.tokenId);
-  withdraw.tokenId = event.params.tokenId;
+  withdraw.campaign = event.params.tokenId.toHexString();
   withdraw.from = owner;
   let user = User.load(owner);
   if (!user) {
@@ -109,7 +109,7 @@ export function handleWithdraw(event: WithdrawEvent): void {
   campaign.requiredAmt = campaign.requiredAmt.minus(event.params.withdrawedAmt);
   campaign.save();
   let withdraw = new Withdraw(event.transaction.hash.toHexString());
-  withdraw.tokenId = event.params.tokenId;
+  withdraw.campaign = event.params.tokenId.toHexString();
   withdraw.from = event.params.from;
   withdraw.withdrawedAmt = event.params.withdrawedAmt;
   withdraw.timestamp = event.block.timestamp;
