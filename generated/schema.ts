@@ -78,13 +78,113 @@ export class Campaign extends Entity {
     this.set("requiredAmt", Value.fromBigInt(value));
   }
 
-  get completed(): boolean {
-    let value = this.get("completed");
-    return value!.toBoolean();
+  get startedTimeStamp(): BigInt | null {
+    let value = this.get("startedTimeStamp");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
   }
 
-  set completed(value: boolean) {
-    this.set("completed", Value.fromBoolean(value));
+  set startedTimeStamp(value: BigInt | null) {
+    if (!value) {
+      this.unset("startedTimeStamp");
+    } else {
+      this.set("startedTimeStamp", Value.fromBigInt(<BigInt>value));
+    }
+  }
+
+  get completedTimeStamp(): BigInt | null {
+    let value = this.get("completedTimeStamp");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set completedTimeStamp(value: BigInt | null) {
+    if (!value) {
+      this.unset("completedTimeStamp");
+    } else {
+      this.set("completedTimeStamp", Value.fromBigInt(<BigInt>value));
+    }
+  }
+}
+
+export class Extend extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Extend entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type Extend must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Extend", id.toString(), this);
+    }
+  }
+
+  static load(id: string): Extend | null {
+    return changetype<Extend | null>(store.get("Extend", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get extendAmt(): BigInt | null {
+    let value = this.get("extendAmt");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set extendAmt(value: BigInt | null) {
+    if (!value) {
+      this.unset("extendAmt");
+    } else {
+      this.set("extendAmt", Value.fromBigInt(<BigInt>value));
+    }
+  }
+
+  get timestamp(): BigInt | null {
+    let value = this.get("timestamp");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set timestamp(value: BigInt | null) {
+    if (!value) {
+      this.unset("timestamp");
+    } else {
+      this.set("timestamp", Value.fromBigInt(<BigInt>value));
+    }
+  }
+
+  get campaign(): string {
+    let value = this.get("campaign");
+    return value!.toString();
+  }
+
+  set campaign(value: string) {
+    this.set("campaign", Value.fromString(value));
   }
 }
 
@@ -145,6 +245,15 @@ export class Donation extends Entity {
   set from(value: Bytes) {
     this.set("from", Value.fromBytes(value));
   }
+
+  get timestamp(): BigInt {
+    let value = this.get("timestamp");
+    return value!.toBigInt();
+  }
+
+  set timestamp(value: BigInt) {
+    this.set("timestamp", Value.fromBigInt(value));
+  }
 }
 
 export class Withdraw extends Entity {
@@ -203,5 +312,14 @@ export class Withdraw extends Entity {
 
   set from(value: Bytes) {
     this.set("from", Value.fromBytes(value));
+  }
+
+  get timestamp(): BigInt {
+    let value = this.get("timestamp");
+    return value!.toBigInt();
+  }
+
+  set timestamp(value: BigInt) {
+    this.set("timestamp", Value.fromBigInt(value));
   }
 }

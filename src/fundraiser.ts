@@ -10,7 +10,7 @@ import {
   Transfer as TransferEvent,
   Withdraw as WithdrawEvent,
 } from "../generated/undefined/Fundraiser";
-import { Campaign, Donation, Withdraw } from "../generated/schema";
+import { Campaign, Donation, Extend, Withdraw } from "../generated/schema";
 
 export function handleStartCampaign(event: StartCampaignEvent): void {
   let campaign = Campaign.load(event.params.tokenId.toHex());
@@ -21,7 +21,7 @@ export function handleStartCampaign(event: StartCampaignEvent): void {
   campaign.owner = event.params.owner;
   campaign.currAmt = new BigInt(0);
   campaign.requiredAmt = event.params.requiredAmt;
-  campaign.completed = false;
+  campaign.startedTimeStamp = event.block.timestamp;
   campaign.save();
 }
 
@@ -30,6 +30,7 @@ export function handleDonation(event: DonationEvent): void {
   donation.tokenId = event.params.tokenId;
   donation.amount = event.params.amount;
   donation.from = event.params.from;
+  donation.timestamp = event.block.timestamp;
   donation.save();
   let campaign = Campaign.load(event.params.tokenId.toHex());
   if (!campaign) {
@@ -44,7 +45,7 @@ export function handleEndCampaign(event: EndCampaignEvent): void {
   if (!campaign) {
     campaign = new Campaign(event.params.tokenId.toHex());
   }
-  campaign.completed = true;
+  campaign.completedTimeStamp = event.block.timestamp;
   campaign.save();
   let withdraw = Withdraw.load(event.transaction.hash.toHex());
   if (!withdraw) {
@@ -58,10 +59,15 @@ export function handleEndCampaign(event: EndCampaignEvent): void {
 }
 
 export function handleExtendCampaign(event: ExtendCampaignEvent): void {
+  let extend = new Extend(event.transaction.hash.toHex());
   let campaign = Campaign.load(event.params.tokenId.toHex());
   if (!campaign) {
     campaign = new Campaign(event.params.tokenId.toHex());
   }
+  extend.extendAmt = event.params.extendAmt;
+  extend.timestamp = event.block.timestamp;
+  extend.campaign = campaign.id;
+  extend.save();
   campaign.requiredAmt = campaign.requiredAmt.plus(event.params.extendAmt);
   campaign.save();
 }
@@ -74,17 +80,16 @@ export function handleWithdraw(event: WithdrawEvent): void {
   campaign.currAmt = campaign.currAmt.minus(event.params.withdrawedAmt);
   campaign.requiredAmt = campaign.requiredAmt.minus(event.params.withdrawedAmt);
   campaign.save();
-  let withdraw = Withdraw.load(event.transaction.hash.toHex());
-  if (!withdraw) {
-    withdraw = new Withdraw(event.transaction.hash.toHex());
-  }
+  let withdraw = new Withdraw(event.transaction.hash.toHex());
   withdraw.tokenId = event.params.tokenId;
   withdraw.from = event.params.from;
   withdraw.withdrawedAmt = event.params.withdrawedAmt;
+  withdraw.timestamp = event.block.timestamp;
   withdraw.save();
 }
 
 export function handleTransfer(event: TransferEvent): void {
+  // Change campaign owner when NFT is transferred
   if (
     event.params.from !=
     Address.fromString("0x0000000000000000000000000000000000000000")

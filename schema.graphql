@@ -4,18 +4,27 @@ type Campaign @entity {
   owner: Bytes! # address
   currAmt: BigInt!
   requiredAmt: BigInt!
-  completed: Boolean
+  startedTimeStamp: BigInt
+  completedTimeStamp: BigInt
 }
-type Donation @entity {
+type Extend @entity(immutable: true) {
+  id: ID!
+  extendAmt: BigInt
+  timestamp: BigInt
+  campaign: Campaign!
+}
+type Donation @entity(immutable: true) {
   id: ID!
   tokenId: BigInt!
   amount: BigInt!
   from: Bytes!
+  timestamp: BigInt!
 }
 
-type Withdraw @entity {
+type Withdraw @entity(immutable: true) {
   id: ID!
   tokenId: BigInt!
   withdrawedAmt: BigInt!
   from: Bytes!
+  timestamp: BigInt!
 }
