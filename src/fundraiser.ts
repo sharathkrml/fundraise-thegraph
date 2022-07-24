@@ -13,9 +13,9 @@ import {
 import { Campaign, Donation, Extend, Withdraw } from "../generated/schema";
 
 export function handleStartCampaign(event: StartCampaignEvent): void {
-  let campaign = Campaign.load(event.params.tokenId.toHex());
+  let campaign = Campaign.load(event.params.tokenId.toHexString());
   if (!campaign) {
-    campaign = new Campaign(event.params.tokenId.toHex());
+    campaign = new Campaign(event.params.tokenId.toHexString());
   }
   campaign.tokenId = event.params.tokenId;
   campaign.owner = event.params.owner;
