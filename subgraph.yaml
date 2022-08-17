@@ -3,15 +3,15 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum
-    name: undefined
-    network: rinkeby
+    name: Fundraiser
+    network: mumbai
     source:
-      address: "0xeDCaA4e4155Daa1470D507Ce38F014dc17CCc1cE"
+      address: "0xaae5CfFBe4812d650F39B5ffBc88db03387902E8"
       abi: Fundraiser
-      startBlock: 11064236
+      startBlock: 27655405
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.5
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
         - Approval

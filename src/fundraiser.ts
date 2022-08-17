@@ -9,7 +9,7 @@ import {
   StartCampaign as StartCampaignEvent,
   Transfer as TransferEvent,
   Withdraw as WithdrawEvent,
-} from "../generated/undefined/Fundraiser";
+} from "../generated/Fundraiser/Fundraiser";
 import {
   Campaign,
   Donation,
